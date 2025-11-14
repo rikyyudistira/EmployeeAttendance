@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<body>
+<canvas id="canvas"></canvas>
+<script>
+const sizes = [72, 96, 128, 144, 152, 192, 384, 512];
+sizes.forEach(size => {
+  const canvas = document.getElementById('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d');
+  
+  // Background
+  const gradient = ctx.createLinearGradient(0, 0, size, size);
+  gradient.addColorStop(0, '#3b82f6');
+  gradient.addColorStop(1, '#1e40af');
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, size, size);
+  
+  // QR icon representation
+  ctx.fillStyle = 'white';
+  const iconSize = size * 0.5;
+  const padding = size * 0.25;
+  
+  // Simple QR-like pattern
+  const boxSize = iconSize / 3;
+  for(let i = 0; i < 3; i++) {
+    for(let j = 0; j < 3; j++) {
+      if ((i + j) % 2 === 0) {
+        ctx.fillRect(padding + i * boxSize, padding + j * boxSize, boxSize * 0.8, boxSize * 0.8);
+      }
+    }
+  }
+  
+  canvas.toBlob(blob => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `icon-${size}x${size}.png`;
+    a.click();
+  });
+});
+</script>
+</body>
+</html>

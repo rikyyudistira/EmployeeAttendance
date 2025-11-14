@@ -1,0 +1,60 @@
+@startuml
+' Employee check-in / check-out flow (legacy activity syntax)
+(*) --> "Open App / Authenticate"
+if "Authenticated?" then
+  -->[yes] "Open Attendance Page"
+  --> "Initiate Scan QR"
+  --> "Camera scans QR code"
+  --> "Validate QR (exists, active, not expired)"
+  if "QR valid?" then
+    -->[yes] "Fetch QR metadata"
+    --> "Get GPS location"
+    --> "Validate GPS location"
+    if "Within radius?" then
+      -->[yes] "Take Photo (optional)"
+      --> "Upload photo to Storage"
+      --> "Check today's attendance record"
+      if "No record?" then
+        -->[yes] "Create attendance record (check_in = now)"
+        --> "Show Check-In Successful"
+        --> (*)
+      else
+        -->[no] if "record has check_out?" then
+          -->[yes] "Show 'Already checked out'"
+          --> (*)
+        else
+          -->[no] "Update attendance record (set check_out = now)"
+          --> "Show Check-Out Successful"
+          --> (*)
+        endif
+      endif
+    else
+      -->[no] "Show 'Out of range'"
+      --> (*)
+    endif
+  else
+    -->[no] "Show 'Invalid or expired QR'"
+    --> (*)
+  endif
+else
+  -->[no] "Show Login Screen"
+  --> (*)
+endif
+@enduml
+
+@startuml
+' Admin QR generation flow (legacy activity syntax)
+(*) --> "Open Admin Dashboard / Authenticate"
+if "Authenticated?" then
+  -->[yes] "Open Generate QR Page"
+  --> "Request Generate QR"
+  --> "Create new QR code record (code, department_id, expires_at, is_active = true)"
+  --> "Deactivate previous active codes for the department (if any)"
+  --> "Return QR payload / image"
+  --> "Show Generated QR (Admin)"
+  --> (*)
+else
+  -->[no] "Show Login Screen"
+  --> (*)
+endif
+@enduml

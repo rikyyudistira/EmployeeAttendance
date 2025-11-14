@@ -1,0 +1,71 @@
+@startuml
+title Sistem Absensi QR
+
+left to right direction
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+
+' Aktor
+:Karyawan: as karyawan
+:Admin: as admin
+
+' Paket untuk Autentikasi
+rectangle Autentikasi {
+  usecase "Masuk" as login
+  usecase "Keluar" as logout
+}
+
+' Paket untuk Fitur Karyawan
+rectangle "Fitur Karyawan" {
+  usecase "Pindai Kode QR" as scanQR
+  usecase "Absen Masuk" as checkIn
+  usecase "Absen Keluar" as checkOut
+  usecase "Lihat Riwayat" as viewHistory
+  usecase "Lihat Dasboard" as empDashboard
+  usecase "Ambil Foto" as takePhoto
+  usecase "Validasi Lokasi" as validateGPS
+}
+
+' Paket untuk Fitur Admin
+rectangle "Fitur Admin" {
+  usecase "Buat Kode QR" as generateQR
+  usecase "Lihat Laporan" as viewReports
+  usecase "Kelola Absensi" as manageAttendance
+}
+
+' Relasi Autentikasi
+karyawan --> login
+admin --> login
+karyawan --> logout
+admin --> logout
+
+' Relasi Karyawan
+karyawan --> scanQR
+karyawan --> checkIn
+karyawan --> checkOut
+karyawan --> viewHistory
+karyawan --> empDashboard
+karyawan --> takePhoto
+karyawan --> validateGPS
+
+' Relasi Admin
+admin --> generateQR
+admin --> viewReports
+admin --> manageAttendance
+
+' Dependencies
+checkIn ..> scanQR : <<include>>
+checkIn ..> validateGPS : <<include>>
+checkIn ..> takePhoto : <<include>>
+checkOut ..> scanQR : <<include>>
+checkOut ..> validateGPS : <<include>>
+checkOut ..> takePhoto : <<include>>
+
+' Catatan
+note "Kode QR kedaluwarsa setelah\nperiode tertentu" as N1
+generateQR .. N1
+
+note "Memerlukan GPS dalam\nradius kantor" as N2
+validateGPS .. N2
+
+@enduml

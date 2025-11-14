@@ -1,0 +1,65 @@
+    @startuml
+    ' Diagram aktivitas (PlantUML legacy) - Terjemahan Bahasa Indonesia
+
+    (*) --> "Buka Aplikasi / Autentikasi"
+    if "Sudah terautentikasi?" then
+    -->[ya] "Buka Halaman Absensi"
+    --> "Mulai Pindai QR"
+    --> "Kamera memindai kode QR"
+    --> "Validasi QR (ada, aktif, tidak kedaluwarsa)"
+    if "QR valid?" then
+        -->[ya] "Ambil metadata QR"
+        --> "Dapatkan lokasi GPS"
+        --> "Validasi lokasi GPS"
+        if "Dalam radius?" then
+        -->[ya] "Ambil Foto (opsional)"
+        --> "Unggah foto ke Penyimpanan"
+        --> "Terima URL foto"
+        --> "Periksa catatan absensi hari ini"
+        if "Tidak ada catatan?" then
+            -->[ya] "Buat catatan absensi (check_in = sekarang)"
+            --> "Tampilkan: Absen Masuk Berhasil"
+            --> (*)
+        else
+            -->[tidak] if "catatan sudah memiliki check_out?" then
+            -->[ya] "Tampilkan: Sudah melakukan check-out"
+            --> (*)
+            else
+            -->[tidak] "Perbarui catatan absensi (set check_out = sekarang)"
+            --> "Tampilkan: Absen Keluar Berhasil"
+            --> (*)
+            endif
+        endif
+        else
+        -->[tidak] "Tampilkan: Di luar radius"
+        --> (*)
+        endif
+    else
+        -->[tidak] "Tampilkan: QR tidak valid atau telah kedaluwarsa"
+        --> (*)
+    endif
+    else
+    -->[tidak] "Tampilkan Layar Masuk"
+    --> (*)
+    endif
+
+    @enduml
+
+    @startuml
+    ' Alur pembuatan QR oleh Admin (PlantUML legacy - terjemahan)
+
+    (*) --> "Buka Dashboard Admin / Autentikasi"
+    if "Sudah terautentikasi?" then
+    -->[ya] "Buka Halaman Buat Kode QR"
+    --> "Permintaan: Buat Kode QR"
+    --> "Buat record kode QR baru (code, department_id, expires_at, is_active = true)"
+    --> "Nonaktifkan kode aktif sebelumnya untuk departemen (jika ada)"
+    --> "Kembalikan payload / gambar QR"
+    --> "Tampilkan: Kode QR yang dibuat (Admin)"
+    --> (*)
+    else
+    -->[tidak] "Tampilkan Layar Masuk"
+    --> (*)
+    endif
+
+    @enduml

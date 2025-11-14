@@ -1,0 +1,58 @@
+@startuml DFD Level 0 - QR Attendance System
+
+!define SYSTEM_COLOR #ADD8E6
+!define EXTERNAL_COLOR #FFFACD
+!define ARROW_COLOR #808080
+
+' Styling
+skinparam rectangle {
+    roundCorner 25
+    backgroundColor SYSTEM_COLOR
+    fontColor black
+}
+
+skinparam actor {
+    backgroundColor EXTERNAL_COLOR
+}
+
+skinparam arrow {
+    color ARROW_COLOR
+    thickness 2
+}
+
+' Main System
+rectangle "QR-Based\nAttendance System" as system
+
+' External Entities
+actor Employee
+actor Admin
+
+
+' Data Flows - Employee
+Employee -[#0000FF]-> system : Login Credentials
+Employee -[#0000FF]-> system : Scan QR Code
+Employee -[#0000FF]-> system : Photo Capture
+system -[#FF0000]-> Employee : Authentication Token
+system -[#FF0000]-> Employee : Attendance Status
+system -[#FF0000]-> Employee : History Data
+system -[#FF0000]-> Employee : Dashboard Stats
+
+' Data Flows - Admin
+Admin -[#0000FF]-> system : Login Credentials
+Admin -[#0000FF]-> system : Generate QR Request
+system -[#FF0000]-> Admin : Authentication Token
+system -[#FF0000]-> Admin : Generated QR Code
+system -[#FF0000]-> Admin : Attendance Reports
+
+
+
+legend right
+  Arrow Colors:
+  ==
+  <back:#0000FF>   </back> User Input
+  <back:#FF0000>   </back> System Output
+  <back:#800080>   </back> Storage Operations
+  <back:#008000>   </back> GPS Data Flow
+end legend
+
+@enduml

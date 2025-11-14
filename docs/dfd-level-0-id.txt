@@ -1,0 +1,55 @@
+@startuml DFD Level 0 - Sistem Absensi QR
+
+!define SYSTEM_COLOR #ADD8E6
+!define EXTERNAL_COLOR #FFFACD
+!define ARROW_COLOR #808080
+
+' Styling
+skinparam rectangle {
+    roundCorner 25
+    backgroundColor SYSTEM_COLOR
+    fontColor black
+}
+
+skinparam actor {
+    backgroundColor EXTERNAL_COLOR
+}
+
+skinparam arrow {
+    color ARROW_COLOR
+    thickness 2
+}
+
+' Sistem Utama
+rectangle "Sistem Absensi Berbasis QR" as system
+
+' Entitas Eksternal
+actor Karyawan
+actor Admin
+
+' Aliran Data - Karyawan
+Karyawan -[#0000FF]-> system : Kredensial Masuk
+Karyawan -[#0000FF]-> system : Pindai Kode QR
+Karyawan -[#0000FF]-> system : Ambil Foto
+system -[#FF0000]-> Karyawan : Token Autentikasi
+system -[#FF0000]-> Karyawan : Status Absensi
+system -[#FF0000]-> Karyawan : Data Riwayat
+system -[#FF0000]-> Karyawan : Statistik Dasbor
+
+' Aliran Data - Admin
+Admin -[#0000FF]-> system : Kredensial Masuk
+Admin -[#0000FF]-> system : Permintaan Buat Kode QR
+system -[#FF0000]-> Admin : Token Autentikasi
+system -[#FF0000]-> Admin : Kode QR yang Dibuat
+system -[#FF0000]-> Admin : Laporan Absensi
+
+legend right
+  Warna Panah:
+  ==
+  <back:#0000FF>   </back> Masukan Pengguna
+  <back:#FF0000>   </back> Keluaran Sistem
+  <back:#800080>   </back> Operasi Penyimpanan
+  <back:#008000>   </back> Aliran Data GPS
+end legend
+
+@enduml

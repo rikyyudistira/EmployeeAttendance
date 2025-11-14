@@ -1,0 +1,72 @@
+@startuml QR Attendance System
+
+left to right direction
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+
+' Actors
+:Employee: as employee
+:Admin: as admin
+
+' Package for Authentication
+rectangle Authentication {
+  usecase "Login" as login
+  usecase "Logout" as logout
+}
+
+' Package for Employee Features
+rectangle "Employee Features" {
+  usecase "Scan QR Code" as scanQR
+  usecase "Check In" as checkIn
+  usecase "Check Out" as checkOut
+  usecase "View History" as viewHistory
+  usecase "View Dashboard" as empDashboard
+  usecase "Take Photo" as takePhoto
+  usecase "Validate Location" as validateGPS
+}
+
+' Package for Admin Features
+rectangle "Admin Features" {
+  usecase "Generate QR" as generateQR
+  usecase "View Reports" as viewReports
+  usecase "Manage Attendance" as manageAttendance
+  usecase "Monitor System" as monitorSystem
+}
+
+' Authentication relationships
+employee --> login
+admin --> login
+employee --> logout
+admin --> logout
+
+' Employee relationships
+employee --> scanQR
+employee --> checkIn
+employee --> checkOut
+employee --> viewHistory
+employee --> empDashboard
+employee --> takePhoto
+employee --> validateGPS
+
+' Admin relationships
+admin --> generateQR
+admin --> viewReports
+admin --> manageAttendance
+admin --> monitorSystem
+
+' Dependencies
+checkIn ..> scanQR : <<include>>
+checkIn ..> validateGPS : <<include>>
+checkIn ..> takePhoto : <<include>>
+checkOut ..> scanQR : <<include>>
+checkOut ..> validateGPS : <<include>>
+checkOut ..> takePhoto : <<include>>
+
+' Notes
+note "QR codes expire after\nset duration" as N1
+generateQR .. N1
+
+note "Requires GPS within\noffice radius" as N2
+validateGPS .. N2
+
+@enduml
