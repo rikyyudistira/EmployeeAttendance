@@ -78,23 +78,21 @@ export async function DELETE(request, { params }) {
     const id = params.id
     const admin = createServiceClient()
 
-    // By default: delete employee row. Optionally delete auth user if ?auth=true
-    const url = new URL(request.url)
-    const deleteAuth = url.searchParams.get('auth') === 'true'
-
-    const { error } = await admin
+    // Delete employee row from employees table
+    const { error: deleteEmployeeError } = await admin
       .from('employees')
       .delete()
       .eq('id', id)
 
-    if (error) throw error
+    if (deleteEmployeeError) throw deleteEmployeeError
 
-    if (deleteAuth) {
-      try {
-        await admin.auth.admin.deleteUser(id)
-      } catch (err) {
-        console.warn('Failed to delete auth user:', err)
-      }
+    // Delete auth user from Authentication
+    try {
+      await admin.auth.admin.deleteUser(id)
+    } catch (err) {
+      console.error('Warning: Failed to delete auth user:', err.message)
+      // Don't throw here - employee was already deleted from table
+      // but log the error for manual cleanup if needed
     }
 
     return NextResponse.json({ success: true })
